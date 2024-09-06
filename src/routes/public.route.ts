@@ -15,6 +15,7 @@ export const publicGraphQLRoute: Routes.TRouteInjection = (router: Router) => {
                 allVehicleData: resolvers.Query.allVehicleData,
             },
             Mutation: {
+                // Include only public mutations here
             },
         },
     });

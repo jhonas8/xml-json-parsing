@@ -4,7 +4,7 @@ import { publicGraphQLRoute } from './public.route';
 import { privateGraphQLRoute } from './private.route';
 import { restRoutes } from './rest.route';
 
-const publicRoutes: Router = Router();
+const publicRoutes: Router = Router()
 const privateRoutes: Router = Router().use(validateAuth);
 
 // REST Routes
