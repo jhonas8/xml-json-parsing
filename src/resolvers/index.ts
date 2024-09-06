@@ -1,13 +1,11 @@
 import { userResolvers } from './user';
 import { productResolvers } from './product';
+import { vehicleDataResolvers } from './vehicleData';
 
 export const resolvers = {
     Query: {
-        ...userResolvers.Query,
-        ...productResolvers.Query,
+        ...vehicleDataResolvers.Query,
     },
     Mutation: {
-        ...userResolvers.Mutation,
-        ...productResolvers.Mutation,
     },
 };

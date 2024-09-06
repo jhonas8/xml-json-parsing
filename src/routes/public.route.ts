@@ -11,12 +11,10 @@ export const publicGraphQLRoute: Routes.TRouteInjection = (router: Router) => {
         resolvers: {
             Query: {
                 // Include only public queries here
-                users: resolvers.Query.users,
-                products: resolvers.Query.products,
+                vehicleDataByMakeId: resolvers.Query.vehicleDataByMakeId,
+                allVehicleData: resolvers.Query.allVehicleData,
             },
             Mutation: {
-                // Include only public mutations here
-                createUser: resolvers.Mutation.createUser,
             },
         },
     });
@@ -25,4 +23,4 @@ export const publicGraphQLRoute: Routes.TRouteInjection = (router: Router) => {
         schema: publicSchema,
         graphiql: true,
     }));
-}
+};
