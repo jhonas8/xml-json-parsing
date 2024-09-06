@@ -1,7 +1,5 @@
-import { userTypeDefs } from './user';
-import { productTypeDefs } from './product';
+import { vehicleDataTypeDefs } from './vehicleData';
 
 export const typeDefs = [
-    userTypeDefs,
-    productTypeDefs,
+    vehicleDataTypeDefs,
 ];
