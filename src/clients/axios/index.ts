@@ -1,13 +1,15 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Response } from '../../@types/response';
 import { logger } from '../../utils/logger';
+import { Clients } from '../../@types/clients';
 
 
-export const createAxiosClient = (responseType: Response.ResponseType) => {
+export const createAxiosClient = (responseType: Response.ResponseType, options: AxiosRequestConfig = {}): Clients.IAxiosClient => {
     const instance = axios.create({
         headers: {
             'Accept': responseType === 'json' ? 'application/json' : 'application/xml',
         },
+        ...options
     });
 
     // Add logging interceptors, to simulate production monitoring practices
