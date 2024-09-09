@@ -10,7 +10,7 @@ const fetchMakes = async () => {
     return makes;
 };
 
-const seedDatabase = async () => {
+export const seedDatabase = async () => {
     await logAction('Connecting to the database', connectToDatabase);
 
     const data = await logAction('fetching data', fetchDataRoutine);

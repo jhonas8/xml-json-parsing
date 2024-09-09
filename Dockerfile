@@ -23,11 +23,7 @@ COPY yarn.lock ./
 RUN yarn install --production
 
 COPY --from=builder /usr/src/app/dist ./dist
-COPY start.sh .
-
-# Make the startup script executable
-RUN chmod +x start.sh
 
 EXPOSE 3000
 
-CMD ["./start.sh"]
+CMD ["yarn", "start"]
