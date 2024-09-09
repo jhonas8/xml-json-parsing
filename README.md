@@ -48,6 +48,12 @@ This project fetches vehicle data from the NHTSA vPIC API, stores it in a MongoD
    npm start
    ```
 
+## Running with docker-compose
+1. Spin up the whole application:
+    ```
+    docker-compose -f ./docker-compose.yaml up
+    ```
+
 The server should now be running on `http://localhost:3000`.
 
 ## API Endpoints
