@@ -16,4 +16,15 @@ export const vehicleDataResolvers = {
             };
         },
     },
+    Mutation: {
+        createVehicle: async () => {
+            throw new Error('Operation not supported');
+        },
+        updateVehicle: async () => {
+            throw new Error('Operation not supported');
+        },
+        deleteVehicle: async () => {
+            throw new Error('Operation not supported');
+        },
+    },
 };

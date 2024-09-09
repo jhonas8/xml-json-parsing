@@ -1,9 +1,13 @@
 export const vehicleDataTypeDefs = `
+  type VehicleType {
+    typeId: String!
+    typeName: String!
+  }
+
   type VehicleData {
-    id: ID!
-    make: String!
-    model: String!
-    year: Int!
+    makeId: String!
+    makeName: String!
+    vehicleTypes: [VehicleType!]!
   }
 
   input CreateVehicleInput {
@@ -19,7 +23,7 @@ export const vehicleDataTypeDefs = `
   }
 
   type Query {
-    vehicleDataByMakeId(makeId: String!): [VehicleData!]!
+    vehicleDataByMakeId(makeId: String!): VehicleData
     allVehicleData(page: Int, limit: Int): VehicleDataResponse!
   }
 
