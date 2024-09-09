@@ -1,1 +1,1 @@
-export const parseXMLData = <T = any>(xmlString: string): T => JSON.parse(xmlString)
+export const parseXMLData = (xmlString: string): string => JSON.stringify(xmlString)

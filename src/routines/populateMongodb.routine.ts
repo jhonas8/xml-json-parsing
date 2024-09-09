@@ -1,10 +1,13 @@
 import { fetchDataRoutine } from './fetchData.routine';
 import { connectToDatabase } from '../database/connection';
-import { VehiclesData } from '../database/models';
+import { Makes } from '../database/models';
 import { Response } from '../@types/response';
+import { logAction } from '../utils/logAction';
 
-export const populateMongodbRoutine = async (data: Response.IVehiclesData[]) => {
+export const populateMongodbRoutine = async (data: Response.IMakeResponse[]) => {
     await connectToDatabase();
 
-    await VehiclesData.insertMany(data);
+
+    await logAction('Clearing makes collection', () => Makes.deleteMany({}));
+    await logAction('Inserting makes', () => Makes.insertMany(data, { ordered: false }));
 };

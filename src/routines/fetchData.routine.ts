@@ -1,29 +1,40 @@
 import { createVpicClient } from "../clients/vPIC"
-import { parseXMLData } from "../utils/dataParser"
 import { Response } from "../@types/response"
 import { Clients } from "../@types/clients";
+import { logger } from "../utils/logger";
+import { vehicleDataService } from "../services/vehicleData.service";
 
 const enhanceMakeDataWithVehicleTypes = async (make: Response.IMakeResponse, vpicClient: Clients.IVpicClient) => {
-    const vehicleTypeXML = await vpicClient.getVehiclesTypeByMakeId(make.Make_ID[0]);
-    const vehicleTypes = parseXMLData<Response.IVehicleTypeResponse[]>(vehicleTypeXML.Response.Results[0].VehicleTypesForMakeIds)
+    try {
+        const vehicleTypes = await vehicleDataService.getVehicleTypes(make.Make_ID[0]);
 
-    return {
-        makeId: make.Make_ID[0],
-        makeName: make.Make_Name[0],
-        vehicleTypes: vehicleTypes.map(type => ({
-            typeId: type.VehicleTypeId[0],
-            typeName: type.VehicleTypeName[0],
-        }))
+        return {
+            makeId: make.Make_ID[0],
+            makeName: make.Make_Name[0],
+            vehicleTypes: vehicleTypes.map(type => ({
+                typeId: type.VehicleTypeId[0],
+                typeName: type.VehicleTypeName[0],
+            }))
+        }
+    } catch (error) {
+        logger(`Error fetching vehicle types for make ${make.Make_ID[0]}: ${error}`);
+        throw error;
     }
 }
 
-export const fetchDataRoutine = async (): Promise<Response.IVehiclesData[]> => {
+export const fetchDataRoutine = async (): Promise<Response.IMakeResponse[]> => {
     const vpicClient = createVpicClient()
 
     const makesXML = await vpicClient.getMakes()
-    const makesXMLResults = makesXML.Response.Results[0].AllVehicleMakes
+    const makesXMLResults: Response.IMakeResponse[] = makesXML.Response.Results[0].AllVehicleMakes
 
-    const makes = parseXMLData<Response.IMakeResponse[]>(makesXMLResults)
+    logger(`Fetched makes data. Length: ${makesXMLResults.length}`)
 
-    return Promise.all(makes.map((make) => enhanceMakeDataWithVehicleTypes(make, vpicClient)))
+    // Save makes to the database
+    await Promise.all(makesXMLResults.map(make => vehicleDataService.saveMake(make)));
+
+    // Fetch makes from the database
+    const makes = await vehicleDataService.getAllMakes();
+
+    return makes;
 }
