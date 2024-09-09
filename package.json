@@ -31,6 +31,7 @@
     "test": "jest",
     "dev:watch": "nodemon src/index.ts",
     "seed": "ts-node src/migration.ts",
-    "docker:seed": "docker-compose exec app npm run seed"
+    "docker:seed": "docker-compose exec app npm run seed",
+    "performance": "ts-node src/performanceTest.ts"
   }
 }

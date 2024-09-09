@@ -3,23 +3,27 @@ FROM node:20-alpine as builder
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+COPY yarn.lock ./
 
-RUN npm ci
+# Install dependencies using Yarn
+RUN yarn install
 
 COPY . .
 
-RUN npm run build
+RUN yarn build
 
 FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+COPY yarn.lock ./
 
-RUN npm ci --only=production
+# Install production dependencies using Yarn
+RUN yarn install --production
 
 COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]

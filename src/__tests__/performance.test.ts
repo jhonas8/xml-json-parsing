@@ -5,21 +5,17 @@ import { performance } from 'perf_hooks';
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-// Create an Axios instance with interceptors
-const instance = axios.create();
+// Function to measure request time
+const measureRequestTime = async (url: string, payload: any, params: any) => {
+    const start = performance.now(); // Start time
+    const response = await mockedAxios.post(url, payload, params);
+    const end = performance.now(); // End time
 
-instance.interceptors.request.use((config) => {
-    config.headers['request-startTime'] = process.hrtime();
-    return config;
-});
-
-instance.interceptors.response.use((response) => {
-    const start = response.config.headers['request-startTime'];
-    const end = process.hrtime(start);
-    const milliseconds = Math.round((end[0] * 1000) + (end[1] / 1000000));
-    response.headers['request-duration'] = milliseconds;
+    // Ensure headers object exists
+    response.headers = response.headers || {};
+    response.headers['request-duration'] = end - start; // Attach duration to headers
     return response;
-});
+};
 
 describe('GraphQL API Performance Test', () => {
     const url = 'http://localhost:3000/graphql';
@@ -51,12 +47,16 @@ describe('GraphQL API Performance Test', () => {
     });
 
     test('should handle 200-500 concurrent requests within 1 second', async () => {
-        const mockResponse = { data: { allVehicleData: { data: [] } }, status: 200 };
+        const mockResponse = {
+            data: { allVehicleData: { data: [] } },
+            status: 200,
+            headers: {} // Add headers object here
+        };
         mockedAxios.post.mockResolvedValue(mockResponse);
 
         const concurrentRequests = 500; // Testing the upper limit
         const requests = Array(concurrentRequests).fill(null).map(() =>
-            instance.post(url, payload, params) // Use the instance with interceptors
+            measureRequestTime(url, payload, params) // Use the measureRequestTime function
         );
 
         const start = performance.now();
