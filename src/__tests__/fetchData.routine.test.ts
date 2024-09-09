@@ -1,33 +1,32 @@
 import { fetchDataRoutine } from '../routines/fetchData.routine';
+import { vehicleDataService } from '../services/vehicleData.service';
 import { createVpicClient } from '../clients/vPIC';
-import { parseXMLData } from '../utils/dataParser';
 
 jest.mock('../clients/vPIC');
-jest.mock('../utils/dataParser');
+jest.mock('../services/vehicleData.service');
 
-describe('Fetch Data Routine', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    test('fetchDataRoutine should fetch and process data correctly', async () => {
-        const mockMakesXML = { Response: { Results: [{ AllVehicleMakes: [{ Make_ID: ['440'], Make_Name: ['ASTON MARTIN'] }] }] } };
-        const mockVehicleTypesXML = { Response: { Results: [{ VehicleTypesForMakeIds: [{ VehicleTypeId: ['2'], VehicleTypeName: ['Passenger Car'] }] }] } };
+describe('fetchDataRoutine', () => {
+    it('should fetch and save makes data', async () => {
+        const mockMakes = [
+            { Make_ID: ['440'], Make_Name: ['ASTON MARTIN'] },
+            { Make_ID: ['441'], Make_Name: ['TESLA'] },
+        ];
 
         (createVpicClient as jest.Mock).mockReturnValue({
-            getMakes: jest.fn().mockResolvedValue(mockMakesXML),
-            getVehiclesTypeByMakeId: jest.fn().mockResolvedValue(mockVehicleTypesXML),
+            getMakes: jest.fn().mockResolvedValue({
+                Response: { Results: [{ AllVehicleMakes: mockMakes }] },
+            }),
         });
 
-        (parseXMLData as jest.Mock).mockImplementation((data) => data);
+        (vehicleDataService.saveMake as jest.Mock).mockResolvedValue(undefined);
+        (vehicleDataService.getAllMakes as jest.Mock).mockResolvedValue(mockMakes);
 
         const result = await fetchDataRoutine();
 
-        expect(result).toHaveLength(1);
-        expect(result[0]).toHaveProperty('makeId', '440');
-        expect(result[0]).toHaveProperty('makeName', 'ASTON MARTIN');
-        expect(result[0].vehicleTypes).toHaveLength(1);
-        expect(result[0].vehicleTypes[0]).toHaveProperty('typeId', '2');
-        expect(result[0].vehicleTypes[0]).toHaveProperty('typeName', 'Passenger Car');
+        expect(result).toHaveLength(2);
+        expect(result[0]).toHaveProperty('Make_ID', ['440']);
+        expect(result[0]).toHaveProperty('Make_Name', ['ASTON MARTIN']);
+        expect(vehicleDataService.saveMake).toHaveBeenCalledTimes(2);
+        expect(vehicleDataService.getAllMakes).toHaveBeenCalled();
     });
 });
