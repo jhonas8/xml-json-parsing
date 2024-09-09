@@ -66,7 +66,7 @@ export const vehicleDataService = {
     },
 
     getVehicleTypes: async (makeId: string): Promise<Response.IVehicleTypeResponse[]> => {
-        let vehicleTypes = await VehicleTypes.find({ makeId });
+        const vehicleTypes = await VehicleTypes.find({ makeId });
 
         if (vehicleTypes && vehicleTypes.length !== 0)
             return vehicleTypes.map(type => ({
