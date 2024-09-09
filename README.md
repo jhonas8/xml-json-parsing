@@ -68,3 +68,37 @@ To run the unit tests:
     ```
     yarn test
     ```
+
+### REST Endpoints
+
+1. Fetch vehicle data by makeId:
+   
+   GET `http://localhost:3000/rest/vehicle/{makeId}`
+
+   Example: `http://localhost:3000/rest/vehicle/440`
+
+### Comparison: Fetching Make by MakeId
+
+1. Using GraphQL:
+   
+   Endpoint: `http://localhost:3000/graphql`
+   
+   Query:
+   ```graphql
+   query {
+     vehicleDataByMakeId(makeId: "440") {
+       makeId
+       makeName
+       vehicleTypes {
+         typeId
+         typeName
+       }
+     }
+   }
+   ```
+
+2. Using REST:
+   
+   Endpoint: `http://localhost:3000/rest/vehicle/440`
+
+Both methods will return the same data structure for the specified make.
